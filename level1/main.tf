@@ -1,18 +1,20 @@
-# Create a VPC
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.vpc_cidr
   tags = {
-    Name = "main"
+    Name = "${var.env_code}-main"
   }
 }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
 resource "aws_subnet" "public" {
   count             = length(var.public_subnet_cidr)
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.public_subnet_cidr[count.index]
-  availability_zone = var.availability_zone[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index]
   tags = {
-    Name = "public${count.index}"
+    Name = "${var.env_code}-public${count.index}"
   }
 }
 
@@ -21,9 +23,9 @@ resource "aws_subnet" "private" {
   count             = length(var.public_subnet_cidr)
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.private_subnet_cidr[count.index]
-  availability_zone = var.availability_zone[count.index]
+  availability_zone = data.aws_availability_zones.available.names[count.index]
   tags = {
-    Name = "private${count.index}"
+    Name = "${var.env_code}-private${count.index}"
   }
 }
 
@@ -32,7 +34,7 @@ resource "aws_internet_gateway" "ig" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "ig"
+    Name = "${var.env_code}-ig"
   }
 }
 resource "aws_eip" "nat" {
@@ -40,7 +42,7 @@ resource "aws_eip" "nat" {
   vpc   = true
 
   tags = {
-    Name = "nat${count.index}"
+    Name = "${var.env_code}-nat${count.index}"
   }
 }
 
@@ -50,7 +52,7 @@ resource "aws_nat_gateway" "natgw" {
   subnet_id     = aws_subnet.public[count.index].id
 
   tags = {
-    Name = "natgw$(count.index)"
+    Name = "${var.env_code}-natgw$(count.index)"
   }
   depends_on = [aws_internet_gateway.ig]
 }
@@ -63,7 +65,7 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.ig.id
   }
   tags = {
-    Name = "public"
+    Name = "${var.env_code}-public"
   }
 
 }
@@ -76,7 +78,7 @@ resource "aws_route_table" "private" {
     nat_gateway_id = aws_nat_gateway.natgw[count.index].id
   }
   tags = {
-    Name = "private${count.index}"
+    Name = "${var.env_code}-private${count.index}"
   }
 }
 
