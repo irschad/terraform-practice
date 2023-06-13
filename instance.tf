@@ -12,7 +12,7 @@ data "aws_ami" "amazonlinux" {
 }
 
 resource "aws_security_group" "public" {
-  name        = "public"
+  name        = "${var.env_code}-public"
   description = "allows public traffic"
   vpc_id      = aws_vpc.main.id
 
@@ -31,12 +31,12 @@ resource "aws_security_group" "public" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "public"
+    Name = "${var.env_code}-public"
   }
 }
 
 resource "aws_security_group" "private" {
-  name        = "private"
+  name        = "${var.env_code}-private"
   description = "allows private traffic"
   vpc_id      = aws_vpc.main.id
 
@@ -55,7 +55,7 @@ resource "aws_security_group" "private" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "private"
+    Name = "${var.env_code}-private"
   }
 }
 resource "aws_instance" "public" {
@@ -67,7 +67,7 @@ resource "aws_instance" "public" {
   associate_public_ip_address = "true"
 
   tags = {
-    Name = "public"
+    Name = "${var.env_code}-public"
   }
 
 }
@@ -80,7 +80,7 @@ resource "aws_instance" "private" {
   key_name               = "aws_connect"
 
   tags = {
-    Name = "private"
+    Name = "${var.env_code}-private"
   }
 
 }
