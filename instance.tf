@@ -24,6 +24,13 @@ resource "aws_security_group" "public" {
     cidr_blocks = ["102.202.1.0/28"]
   }
 
+  ingress {
+    description = "HTTP from remote office"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["102.202.1.0/28"]
+  }
   egress {
     from_port   = 0
     to_port     = 0
@@ -65,6 +72,7 @@ resource "aws_instance" "public" {
   vpc_security_group_ids      = [aws_security_group.public.id]
   key_name                    = "aws_connect"
   associate_public_ip_address = "true"
+  user_data                   = file("user-data.sh")
 
   tags = {
     Name = "${var.env_code}-public"
