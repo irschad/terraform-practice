@@ -6,9 +6,16 @@ terraform {
     }
   }
   required_version = ">=1.2"
+
+  backend "s3" {
+    bucket         = "terraform-remotestate3215"
+    key            = "terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "remote-state"
+  }
 }
 
-# Configure the AWS Provider
+
 provider "aws" {
   region = "us-east-1"
 }
