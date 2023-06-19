@@ -16,3 +16,4 @@ resource "aws_dynamodb_table" "terraform_remote_state" {
   }
 
 }
+
