@@ -52,12 +52,10 @@ resource "aws_lb_target_group" "main" {
   }
 
 }
-resource "aws_lb_target_group_attachment" "main" {
-  count            = length(aws_instance.private)
-  target_group_arn = aws_lb_target_group.main.arn
-  target_id        = aws_instance.private[count.index].id
-  port             = 80
 
+resource "aws_autoscaling_attachment" "main" {
+  autoscaling_group_name = aws_autoscaling_group.main.id
+  lb_target_group_arn   = aws_lb_target_group.main.arn
 }
 
 resource "aws_lb_listener" "main" {
