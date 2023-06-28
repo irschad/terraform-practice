@@ -9,3 +9,4 @@ variable "vpc_id" {}
 variable "loadbalancer_sg" {}
 
 variable "ami_id" {}
+
