@@ -18,3 +18,4 @@ data "aws_ami" "amazonlinux" {
   }
   owners = ["137112412989"]
 }
+
